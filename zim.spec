@@ -2,12 +2,12 @@
 Summary:	Desktop wiki & notekeeper
 Summary(pl.UTF-8):	Wiki na pulpicie i notatnik
 Name:		Zim
-Version:	0.19
-Release:	0.1
+Version:	0.20
+Release:	1
 License:	GPL or Artistic
 Group:		X11/Applications/Editors
 Source0:	http://pardus-larus.student.utwente.nl/%7Epardus/downloads/Zim/Zim-%{version}.tar.gz
-# Source0-md5:	cfe31ce36602e1f6c203d1a3ef00498c
+# Source0-md5:	51a6486b13e2656656fe081bbf0a7a91
 URL:		http://www.pardus.nl/projects/zim/
 BuildRequires:	perl-File-BaseDir
 BuildRequires:	perl-File-DesktopEntry
@@ -46,7 +46,7 @@ chmod -x share/zim/dates.list share/zim/plugins/*
 sed -i 's/\r//' share/zim/plugins/Subversion.pl
 
 # We're not running on Win32.  Really :)
-rm ./lib/Zim/Win32.pm
+rm -rf ./lib/Zim/Os
 
 %build
 %{__perl} Build.PL \
