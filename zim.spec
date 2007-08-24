@@ -57,7 +57,7 @@ rm -rf ./lib/Zim/Os
 %install
 rm -rf $RPM_BUILD_ROOT
 
-./Build install \
+%{__perl} Build install \
 	destdir=$RPM_BUILD_ROOT \
 	create_packlist=0
 find $RPM_BUILD_ROOT -depth -type d -exec rmdir {} 2>/dev/null ';'
