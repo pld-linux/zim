@@ -52,7 +52,7 @@ rm -rf ./lib/Zim/Os
 %build
 %{__perl} Build.PL \
 	installdirs=vendor
-./Build
+%{__perl} Build
 
 %install
 rm -rf $RPM_BUILD_ROOT
