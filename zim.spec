@@ -1,29 +1,25 @@
-%include	/usr/lib/rpm/macros.perl
 Summary:	Desktop wiki & notekeeper
 Summary(pl.UTF-8):	Wiki na pulpicie i notatnik
-Name:		Zim
-Version:	0.20
-Release:	1
-License:	GPL or Artistic
+Name:		zim
+Version:	0.56
+Release:	0.3
+License:	GPLv2+ and LGPLv3+
 Group:		X11/Applications/Editors
-Source0:	http://pardus-larus.student.utwente.nl/%7Epardus/downloads/Zim/Zim-%{version}.tar.gz
-# Source0-md5:	51a6486b13e2656656fe081bbf0a7a91
-URL:		http://www.pardus.nl/projects/zim/
-BuildRequires:	perl-File-BaseDir
-BuildRequires:	perl-File-DesktopEntry
-BuildRequires:	perl-File-MimeInfo >= 0.12
-BuildRequires:	perl-Gtk2 >= 1.040
-BuildRequires:	perl-Gtk2-Spell
-BuildRequires:	perl-Gtk2-TrayIcon
-BuildRequires:	perl-Module-Build
-BuildRequires:	perl-devel >= 1:5.8.0
-BuildRequires:	rpm-perlprov >= 4.1-13
-BuildRequires:	sed >= 4.0
+Source0:	http://zim-wiki.org/downloads/%{name}-%{version}.tar.gz
+# Source0-md5:	29147658ea36cd83e40ede979000409c
+URL:		http://zim-wiki.org/
+BuildRequires:	python-devel >= 2.5
+Requires(post,postun):  shared-mime-info
+Requires:	python >= 2.5
+Requires:	python-pygobject
+Requires:	python-pygtk-gtk
+Requires:	python-pyxdg
+Requires:	xdg-utils
 BuildArch:	noarch
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
-Zim is a WYSIWYG text editor written using Gtk2-Perl which aims to
+Zim is a WYSIWYG text editor written using PyGTK which aims to
 bring the concept of a wiki to your desktop. Every page is saved as a
 text file with wiki markup. Pages can contain links to other pages,
 and are saved automatically. Creating a new page is as easy as linking
@@ -32,7 +28,7 @@ that gives it the look and feel of an outliner. This tool is intended
 to keep track of TODO lists or to serve as a personal scratch book.
 
 %description -l pl.UTF-8
-Zim to edytor tekstu WYSIWYG napisany z użyciem biblioteki Gtk2-Perl,
+Zim to edytor tekstu WYSIWYG napisany z użyciem biblioteki PyGTK,
 mający na celu przeniesienie idei wiki na pulpit. Każda strona jest
 zapisywana jako plik tekstowy ze znacznikami wiki. Strony mogą
 zawierać odnośniki do innych stron i są zapisywane automatycznie.
@@ -43,36 +39,44 @@ przeznaczone do śledzenia list TODO albo własnych notatek.
 
 %prep
 %setup -q
-chmod -x share/zim/dates.list share/zim/plugins/*
-sed -i 's/\r//' share/zim/plugins/Subversion.pl
-
-# We're not running on Win32.  Really :)
-rm -rf ./lib/Zim/Os
 
 %build
-%{__perl} Build.PL \
-	installdirs=vendor
-%{__perl} Build
+%{__python} setup.py build
 
 %install
 rm -rf $RPM_BUILD_ROOT
 
-%{__perl} Build install \
-	destdir=$RPM_BUILD_ROOT \
-	create_packlist=0
-find $RPM_BUILD_ROOT -depth -type d -exec rmdir {} 2>/dev/null ';'
+%{__python} setup.py install \
+    --optimize=2 \
+    --root=$RPM_BUILD_ROOT
 
-%{_fixperms} $RPM_BUILD_ROOT/*
+#%%py_postclean
+
+%find_lang %{name}
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
-%files
+%post
+%update_desktop_database_post
+%update_mime_database
+
+%postun
+%update_desktop_database_postun
+%update_mime_database
+
+%files -f %{name}.lang
 %defattr(644,root,root,755)
-%doc Changes ExamplePlugin.pl
-%attr(755,root,root) %{_bindir}/*
-%{perl_vendorlib}/*
+%doc LICENSE.txt CHANGELOG.txt README.txt
+%attr(755,root,root) %{_bindir}/%{name}
 %{_datadir}/zim
-%{_pixmapsdir}/*
+%{_datadir}/mime/application/*
+%{_datadir}/mime/packages/*
+%{_datadir}/mime/text/*
 %{_desktopdir}/*
+%{_iconsdir}/hicolor/*/*/*.png
+%{_iconsdir}/hicolor/*/*/*.svg
+%{_pixmapsdir}/*
 %{_mandir}/man[13]/*.[13]*
+%{py_sitescriptdir}/%{name}
+%{py_sitescriptdir}/%{name}-*.egg-info
