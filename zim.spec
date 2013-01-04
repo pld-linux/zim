@@ -1,12 +1,12 @@
 Summary:	Desktop wiki & notekeeper
 Summary(pl.UTF-8):	Wiki na pulpicie i notatnik
 Name:		zim
-Version:	0.56
-Release:	0.3
+Version:	0.58
+Release:	1
 License:	GPLv2+ and LGPLv3+
 Group:		X11/Applications/Editors
 Source0:	http://zim-wiki.org/downloads/%{name}-%{version}.tar.gz
-# Source0-md5:	29147658ea36cd83e40ede979000409c
+# Source0-md5:	b58eb2331e5395de58208d5a7a2df4bb
 URL:		http://zim-wiki.org/
 BuildRequires:	python-devel >= 2.5
 Requires(post,postun):  shared-mime-info
