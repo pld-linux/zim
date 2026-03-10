@@ -1,20 +1,20 @@
 Summary:	Desktop wiki & notekeeper
 Summary(pl.UTF-8):	Wiki na pulpicie i notatnik
 Name:		zim
-Version:	0.63
+Version:	0.76.3
 Release:	1
 License:	GPLv2+ and LGPLv3+
 Group:		X11/Applications/Editors
-Source0:	http://zim-wiki.org/downloads/%{name}-%{version}.tar.gz
-# Source0-md5:	a23d5da4e71483285ce0e17ca92d0206
-URL:		http://zim-wiki.org/
-BuildRequires:	python-devel >= 2.5
+Source0:	https://zim-wiki.org/downloads/%{name}-%{version}.tar.gz
+# Source0-md5:	13a48045eab6eeadf782b0741cf825ac
+URL:		https://zim-wiki.org/
+BuildRequires:	python3-devel
+BuildRequires:	python3-modules
+BuildRequires:	python3-setuptools
 Requires(post,postun):  shared-mime-info
-Requires:	python >= 2.5
-Requires:	python-modules-sqlite
-Requires:	python-pygobject
-Requires:	python-pygtk-gtk
-Requires:	python-pyxdg
+Requires:	python3-modules
+Requires:	python3-pygobject3
+Requires:	python3-pyxdg
 Requires:	xdg-utils
 BuildArch:	noarch
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -42,14 +42,19 @@ przeznaczone do śledzenia list TODO albo własnych notatek.
 %setup -q
 
 %build
-%{__python} setup.py build
+%{__python3} setup.py build
 
 %install
 rm -rf $RPM_BUILD_ROOT
 
-%{__python} setup.py install \
+%{__python3} setup.py install \
     --optimize=2 \
+    --prefix=%{_prefix} \
     --root=$RPM_BUILD_ROOT
+
+# remove ubuntu-specific icons
+rm -rf $RPM_BUILD_ROOT%{_iconsdir}/ubuntu-mono-dark
+rm -rf $RPM_BUILD_ROOT%{_iconsdir}/ubuntu-mono-light
 
 #%%py_postclean
 
@@ -68,17 +73,15 @@ rm -rf $RPM_BUILD_ROOT
 
 %files -f %{name}.lang
 %defattr(644,root,root,755)
-%doc LICENSE.txt CHANGELOG.txt README.txt
+%doc CHANGELOG.md CONTRIBUTING.md PLUGIN_WRITING.md README.md
+%license LICENSE
 %attr(755,root,root) %{_bindir}/%{name}
-%{_datadir}/appdata/zim.appdata.xml
+%{_datadir}/metainfo/*.xml
 %{_datadir}/zim
-%{_datadir}/mime/application/*
 %{_datadir}/mime/packages/*
-%{_datadir}/mime/text/*
 %{_desktopdir}/*
 %{_iconsdir}/hicolor/*/*/*.png
 %{_iconsdir}/hicolor/*/*/*.svg
-%{_pixmapsdir}/*
-%{_mandir}/man[13]/*.[13]*
-%{py_sitescriptdir}/%{name}
-%{py_sitescriptdir}/%{name}-*.egg-info
+%{_mandir}/man1/*.1*
+%{py3_sitescriptdir}/%{name}
+%{py3_sitescriptdir}/%{name}-*.egg-info
